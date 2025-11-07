@@ -22,21 +22,25 @@ const normalizeAdminResponse = (admin) => ({
 });
 
 const generateToken = (adminId) =>
-  jwt.sign({ _id: adminId }, JWT_SECRET, {
+  jwt.sign({_id: adminId}, JWT_SECRET, {
     expiresIn: '24h',
   });
 
 export const registerAdmin = async (req, res) => {
   try {
-    const { username, password, labCapacity, classCapacity } = req.body;
+    const {username, password, labCapacity, classCapacity} = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+      return res
+        .status(400)
+        .json({message: 'Username and password are required'});
     }
 
-    const existingAdmin = await Admin.findOne({ username });
+    const existingAdmin = await Admin.findOne({username});
     if (existingAdmin) {
-      return res.status(409).json({ message: 'Admin with this username already exists' });
+      return res
+        .status(409)
+        .json({message: 'Admin with this username already exists'});
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -57,26 +61,28 @@ export const registerAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error('Error registering admin:', error);
-    return res.status(500).json({ message: 'Failed to register admin' });
+    return res.status(500).json({message: 'Failed to register admin'});
   }
 };
 
 export const loginAdmin = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const {username, password} = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+      return res
+        .status(400)
+        .json({message: 'Username and password are required'});
     }
 
-    const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({username});
     if (!admin) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({message: 'Invalid credentials'});
     }
 
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({message: 'Invalid credentials'});
     }
 
     const token = generateToken(admin._id);
@@ -88,25 +94,27 @@ export const loginAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error('Error logging in admin:', error);
-    return res.status(500).json({ message: 'Failed to login admin' });
+    return res.status(500).json({message: 'Failed to login admin'});
   }
 };
 
 export const createCourse = async (req, res) => {
   try {
-    const { courseName, courseCode, description, credits, instructor } = req.body;
+    const {courseName, courseCode, description, credits, instructor} = req.body;
 
     if (!courseName || !courseCode || !description || !credits || !instructor) {
-      return res.status(400).json({ message: 'All course fields are required' });
+      return res.status(400).json({message: 'All course fields are required'});
     }
 
     if (typeof credits !== 'number' || credits <= 0) {
-      return res.status(400).json({ message: 'Credits must be a positive number' });
+      return res
+        .status(400)
+        .json({message: 'Credits must be a positive number'});
     }
 
     const teacherExists = await Teacher.findById(instructor);
     if (!teacherExists) {
-      return res.status(404).json({ message: 'Instructor not found' });
+      return res.status(404).json({message: 'Instructor not found'});
     }
 
     const course = await Course.create({
@@ -123,34 +131,44 @@ export const createCourse = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating course:', error);
-    return res.status(500).json({ message: 'Failed to create course' });
+    return res.status(500).json({message: 'Failed to create course'});
   }
 };
 
 export const updateAdminCapacity = async (req, res) => {
   try {
-    const { adminId } = req.params;
-    const { labCapacity, classCapacity } = req.body;
+    const {adminId} = req.params;
+    const {labCapacity, classCapacity} = req.body;
 
-    if (labCapacity !== undefined && (typeof labCapacity !== 'number' || labCapacity <= 0)) {
-      return res.status(400).json({ message: 'labCapacity must be a positive number' });
+    if (
+      labCapacity !== undefined &&
+      (typeof labCapacity !== 'number' || labCapacity <= 0)
+    ) {
+      return res
+        .status(400)
+        .json({message: 'labCapacity must be a positive number'});
     }
 
-    if (classCapacity !== undefined && (typeof classCapacity !== 'number' || classCapacity <= 0)) {
-      return res.status(400).json({ message: 'classCapacity must be a positive number' });
+    if (
+      classCapacity !== undefined &&
+      (typeof classCapacity !== 'number' || classCapacity <= 0)
+    ) {
+      return res
+        .status(400)
+        .json({message: 'classCapacity must be a positive number'});
     }
 
     const admin = await Admin.findByIdAndUpdate(
       adminId,
       {
-        ...(labCapacity !== undefined && { labCapacity }),
-        ...(classCapacity !== undefined && { classCapacity }),
+        ...(labCapacity !== undefined && {labCapacity}),
+        ...(classCapacity !== undefined && {classCapacity}),
       },
-      { new: true }
+      {new: true}
     );
 
     if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
+      return res.status(404).json({message: 'Admin not found'});
     }
 
     return res.status(200).json({
@@ -159,31 +177,31 @@ export const updateAdminCapacity = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating admin capacities:', error);
-    return res.status(500).json({ message: 'Failed to update admin capacities' });
+    return res.status(500).json({message: 'Failed to update admin capacities'});
   }
 };
 
 export const getAdminProfile = async (req, res) => {
   try {
-    const { adminId } = req.params;
+    const {adminId} = req.params;
 
     const admin = await Admin.findById(adminId).select('-password');
 
     if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
+      return res.status(404).json({message: 'Admin not found'});
     }
 
-    return res.status(200).json({ admin });
+    return res.status(200).json({admin});
   } catch (error) {
     console.error('Error fetching admin profile:', error);
-    return res.status(500).json({ message: 'Failed to fetch admin profile' });
+    return res.status(500).json({message: 'Failed to fetch admin profile'});
   }
 };
 
 export const getStudentFeedbacks = async (_req, res) => {
   try {
     const studentsWithFeedback = await Student.find({
-      feedback: { $exists: true, $ne: null, $ne: '' },
+      feedback: {$exists: true, $ne: null, $ne: ''},
     })
       .select('username feedback')
       .lean();
@@ -197,6 +215,6 @@ export const getStudentFeedbacks = async (_req, res) => {
     });
   } catch (error) {
     console.error('Error fetching student feedbacks:', error);
-    return res.status(500).json({ message: 'Failed to fetch student feedbacks' });
+    return res.status(500).json({message: 'Failed to fetch student feedbacks'});
   }
 };

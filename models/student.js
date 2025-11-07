@@ -26,10 +26,12 @@ const studentSchema = new mongoose.Schema({
     type: String,
     maxlength: 100,
   },
-  selectedCourses: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'SelectedCourse',
-  }],
+  selectedCourses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'SelectedCourse',
+    },
+  ],
 });
 const Student = mongoose.model('Student', studentSchema);
 export default Student;

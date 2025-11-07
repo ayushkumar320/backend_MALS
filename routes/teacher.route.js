@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { teacherAuthentication } from '../middlewares/teacher.authentication.js';
+import {Router} from 'express';
+import {teacherAuthentication} from '../middlewares/teacher.authentication.js';
 import {
   registerTeacher,
   loginTeacher,

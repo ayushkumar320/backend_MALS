@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { adminAuthentication } from '../middlewares/admin.authentication.js';
+import {Router} from 'express';
+import {adminAuthentication} from '../middlewares/admin.authentication.js';
 import {
   registerAdmin,
   loginAdmin,

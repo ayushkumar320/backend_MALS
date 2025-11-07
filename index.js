@@ -19,11 +19,11 @@ app.use('/students', studentRoutes);
 app.use('/teachers', teacherRoutes);
 
 app.get('/', (_req, res) => {
-  res.status(200).json({ message: 'Backend MALS API is running' });
+  res.status(200).json({message: 'Backend MALS API is running'});
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({message: 'Route not found'});
 });
 
 try {
@@ -32,6 +32,9 @@ try {
     console.log(`Server is running on http://localhost:${port}`);
   });
 } catch (err) {
-  console.error('Failed to start server due to DB connection error. Exiting.', err);
+  console.error(
+    'Failed to start server due to DB connection error. Exiting.',
+    err
+  );
   process.exit(1);
 }
