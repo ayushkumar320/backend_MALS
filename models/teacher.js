@@ -6,6 +6,10 @@ const techerSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
@@ -18,7 +22,7 @@ const techerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  workingHourse: {
+  workingHour: {
     type: Number,
     required: true,
   },
