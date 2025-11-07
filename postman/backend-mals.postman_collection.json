@@ -1,0 +1,587 @@
+{
+  "info": {
+    "name": "Backend MALS API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection covering admin, student, and teacher flows for Backend MALS API"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"Admin@123\",\n  \"labCapacity\": 80,\n  \"classCapacity\": 120\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "  pm.environment.set('admin_token', response.token);",
+                  "}",
+                  "if (response.admin && response.admin.id) {",
+                  "  pm.environment.set('admin_id', response.admin.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseName\": \"Physics 101\",\n  \"courseCode\": \"PHY101\",\n  \"description\": \"Introductory physics course\",\n  \"credits\": 3,\n  \"instructor\": \"{{teacher_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/courses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Admin Capacity",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"labCapacity\": 100,\n  \"classCapacity\": 150\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/{{admin_id}}/capacity",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "{{admin_id}}",
+                "capacity"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Admin Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/{{admin_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "{{admin_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Student Feedbacks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/feedbacks/list",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "feedbacks",
+                "list"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Student",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"Student@123\",\n  \"age\": 20,\n  \"gender\": \"Female\",\n  \"Program\": \"BSc Computer Science\",\n  \"feedback\": \"Great course content\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"Student@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "  pm.environment.set('student_token', response.token);",
+                  "}",
+                  "if (response.student && response.student.id) {",
+                  "  pm.environment.set('student_id', response.student.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Student Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "{{student_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Student Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": 21,\n  \"feedback\": \"Enjoying the labs\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "{{student_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Student Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feedback\": \"Loving the interactive sessions\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/feedback",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "{{student_id}}",
+                "feedback"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Select Student Courses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"major1\": \"Data Structures\",\n  \"major2\": \"Algorithms\",\n  \"minor1\": \"Discrete Math\",\n  \"minor2\": \"Probability\",\n  \"lab1\": \"DS Lab\",\n  \"lab2\": \"Algo Lab\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/courses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "{{student_id}}",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Selected Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/courses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "{{student_id}}",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Teacher",
+      "item": [
+        {
+          "name": "Register Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"teacher1\",\n  \"password\": \"Teacher@123\",\n  \"name\": \"Dr. Smith\",\n  \"experience\": 10,\n  \"department\": \"Physics\",\n  \"workingHour\": 35\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/teachers/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "teachers",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"teacher1\",\n  \"password\": \"Teacher@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/teachers/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "teachers",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "  pm.environment.set('teacher_token', response.token);",
+                  "}",
+                  "if (response.teacher && response.teacher.id) {",
+                  "  pm.environment.set('teacher_id', response.teacher.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Teacher Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "teachers",
+                "{{teacher_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Teacher Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"experience\": 12,\n  \"workingHour\": 32\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "teachers",
+                "{{teacher_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Teacher Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/teachers/{{teacher_id}}/courses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "teachers",
+                "{{teacher_id}}",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": []
+}
+
