@@ -7,10 +7,7 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-// Start server only after DB connection succeeds. If DB connection fails,
-// exit with a non-zero code so the process manager (or developer) knows.
 try {
-  // top-level await allowed because package.json sets "type": "module"
   await connectDB();
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
