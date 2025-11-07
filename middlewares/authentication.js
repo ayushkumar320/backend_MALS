@@ -17,6 +17,14 @@ export default async function adminAuth(req, res, next) {
     return res.status(401).json({error: 'Unauthorized Access'});
   }
   req.token = token;
-  req.admin = admin;
+  if(admin){
+    req.admin = admin;
+  }
+  if(student){
+    req.student = student;
+  }
+  if(teacher){
+    req.teacher = teacher;
+  }
   next();
 }
