@@ -17,8 +17,7 @@ if (!JWT_SECRET) {
 const normalizeAdminResponse = (admin) => ({
   id: admin._id,
   username: admin.username,
-  labCapacity: admin.labCapacity,
-  classCapacity: admin.classCapacity,
+  college: admin.college || null,
 });
 
 const generateToken = (adminId) =>
@@ -28,7 +27,7 @@ const generateToken = (adminId) =>
 
 export const registerAdmin = async (req, res) => {
   try {
-    const {username, password, labCapacity, classCapacity} = req.body;
+    const {username, password} = req.body;
 
     if (!username || !password) {
       return res
@@ -48,8 +47,6 @@ export const registerAdmin = async (req, res) => {
     const admin = await Admin.create({
       username,
       password: hashedPassword,
-      labCapacity,
-      classCapacity,
     });
 
     const token = generateToken(admin._id);
@@ -135,57 +132,14 @@ export const createCourse = async (req, res) => {
   }
 };
 
-export const updateAdminCapacity = async (req, res) => {
-  try {
-    const {adminId} = req.params;
-    const {labCapacity, classCapacity} = req.body;
-
-    if (
-      labCapacity !== undefined &&
-      (typeof labCapacity !== 'number' || labCapacity <= 0)
-    ) {
-      return res
-        .status(400)
-        .json({message: 'labCapacity must be a positive number'});
-    }
-
-    if (
-      classCapacity !== undefined &&
-      (typeof classCapacity !== 'number' || classCapacity <= 0)
-    ) {
-      return res
-        .status(400)
-        .json({message: 'classCapacity must be a positive number'});
-    }
-
-    const admin = await Admin.findByIdAndUpdate(
-      adminId,
-      {
-        ...(labCapacity !== undefined && {labCapacity}),
-        ...(classCapacity !== undefined && {classCapacity}),
-      },
-      {new: true}
-    );
-
-    if (!admin) {
-      return res.status(404).json({message: 'Admin not found'});
-    }
-
-    return res.status(200).json({
-      message: 'Admin capacities updated successfully',
-      admin: normalizeAdminResponse(admin),
-    });
-  } catch (error) {
-    console.error('Error updating admin capacities:', error);
-    return res.status(500).json({message: 'Failed to update admin capacities'});
-  }
-};
 
 export const getAdminProfile = async (req, res) => {
   try {
     const {adminId} = req.params;
 
-    const admin = await Admin.findById(adminId).select('-password');
+    const admin = await Admin.findById(adminId)
+      .select('-password')
+      .populate('college.coursesOffered', 'courseName courseCode credits');
 
     if (!admin) {
       return res.status(404).json({message: 'Admin not found'});
@@ -216,5 +170,101 @@ export const getStudentFeedbacks = async (_req, res) => {
   } catch (error) {
     console.error('Error fetching student feedbacks:', error);
     return res.status(500).json({message: 'Failed to fetch student feedbacks'});
+  }
+};
+
+export const registerCollege = async (req, res) => {
+  try {
+    const {adminId} = req.params;
+    const {
+      collegeUniqueId,
+      coursesOffered,
+      programsOffered,
+      classroomOccupancy,
+      labOccupancy,
+    } = req.body;
+
+    if (!collegeUniqueId) {
+      return res
+        .status(400)
+        .json({message: 'College unique ID is required'});
+    }
+
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return res.status(404).json({message: 'Admin not found'});
+    }
+
+    if (admin.college && admin.college.collegeUniqueId) {
+      const existingAdmin = await Admin.findOne({
+        'college.collegeUniqueId': collegeUniqueId,
+        _id: {$ne: adminId},
+      });
+      if (existingAdmin) {
+        return res
+          .status(409)
+          .json({message: 'College with this unique ID already exists'});
+      }
+    }
+
+    if (coursesOffered && Array.isArray(coursesOffered)) {
+      const validCourses = await Course.find({
+        _id: {$in: coursesOffered},
+      });
+      if (validCourses.length !== coursesOffered.length) {
+        return res
+          .status(400)
+          .json({message: 'One or more course IDs are invalid'});
+      }
+    }
+
+    if (
+      classroomOccupancy !== undefined &&
+      (typeof classroomOccupancy !== 'number' || classroomOccupancy < 0)
+    ) {
+      return res
+        .status(400)
+        .json({message: 'Classroom occupancy must be a non-negative number'});
+    }
+
+    if (
+      labOccupancy !== undefined &&
+      (typeof labOccupancy !== 'number' || labOccupancy < 0)
+    ) {
+      return res
+        .status(400)
+        .json({message: 'Lab occupancy must be a non-negative number'});
+    }
+
+    const updateData = {
+      'college.collegeUniqueId': collegeUniqueId,
+      ...(coursesOffered && {'college.coursesOffered': coursesOffered}),
+      ...(programsOffered && {'college.programsOffered': programsOffered}),
+      ...(classroomOccupancy !== undefined && {
+        'college.classroomOccupancy': classroomOccupancy,
+      }),
+      ...(labOccupancy !== undefined && {'college.labOccupancy': labOccupancy}),
+    };
+
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      adminId,
+      {$set: updateData},
+      {new: true, runValidators: true}
+    )
+      .select('-password')
+      .populate('college.coursesOffered', 'courseName courseCode credits');
+
+    return res.status(200).json({
+      message: 'College registered/updated successfully',
+      admin: updatedAdmin,
+    });
+  } catch (error) {
+    console.error('Error registering college:', error);
+    if (error.code === 11000) {
+      return res
+        .status(409)
+        .json({message: 'College with this unique ID already exists'});
+    }
+    return res.status(500).json({message: 'Failed to register college'});
   }
 };

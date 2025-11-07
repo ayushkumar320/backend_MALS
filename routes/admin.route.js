@@ -4,9 +4,9 @@ import {
   registerAdmin,
   loginAdmin,
   createCourse,
-  updateAdminCapacity,
   getAdminProfile,
   getStudentFeedbacks,
+  registerCollege,
 } from '../controller/admin.controller.js';
 
 const router = Router();
@@ -15,7 +15,7 @@ router.post('/register', registerAdmin);
 router.post('/login', loginAdmin);
 
 router.post('/courses', adminAuthentication, createCourse);
-router.patch('/:adminId/capacity', adminAuthentication, updateAdminCapacity);
+router.post('/:adminId/college', adminAuthentication, registerCollege);
 router.get('/:adminId', adminAuthentication, getAdminProfile);
 router.get('/feedbacks/list', adminAuthentication, getStudentFeedbacks);
 

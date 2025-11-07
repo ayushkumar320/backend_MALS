@@ -37,7 +37,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"Admin@123\",\n  \"labCapacity\": 80,\n  \"classCapacity\": 120\n}"
+              "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"Admin@123\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/admin/register",
@@ -128,9 +128,9 @@
           "response": []
         },
         {
-          "name": "Update Admin Capacity",
+          "name": "Register College",
           "request": {
-            "method": "PATCH",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
@@ -143,17 +143,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"labCapacity\": 100,\n  \"classCapacity\": 150\n}"
+              "raw": "{\n  \"collegeUniqueId\": \"COLLEGE001\",\n  \"coursesOffered\": [\"{{course_id}}\"],\n  \"programsOffered\": [\"BSc Computer Science\", \"BSc Physics\", \"BSc Mathematics\"],\n  \"classroomOccupancy\": 45,\n  \"labOccupancy\": 30\n}"
             },
             "url": {
-              "raw": "{{base_url}}/admin/{{admin_id}}/capacity",
+              "raw": "{{base_url}}/admin/{{admin_id}}/college",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "admin",
                 "{{admin_id}}",
-                "capacity"
+                "college"
               ]
             }
           },
