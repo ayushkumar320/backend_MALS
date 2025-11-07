@@ -28,6 +28,4 @@ const studentSchema = new mongoose.Schema({
     maxlength: 100,
   },
 });
-// export default SelectedCourse.discriminator('Student', studentSchema);
-// const Student = mongoose.model('Student', studentSchema);
-// export default Student;
+export default SelectedCourse.discriminator('Student', studentSchema);
