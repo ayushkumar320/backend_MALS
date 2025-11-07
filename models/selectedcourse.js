@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
-import Student from './student.js';
-const option = {
-  discriminatorKey: 'courseType',
-};
+
 
 const SelectedCourseSchema = new mongoose.Schema(
   {
@@ -36,7 +33,6 @@ const SelectedCourseSchema = new mongoose.Schema(
       required: true,
     },
   },
-  option
 );
 const SelectedCourse = mongoose.model('SelectedCourse', SelectedCourseSchema);
 export default SelectedCourse;
