@@ -27,19 +27,11 @@ const SelectedCourseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    minor3: {
-        type: String,
-        required: true
-    },
     lab1: {
         type: String,
         required: true
     },
     lab2: {
-        type: String,
-        required: true
-    },
-    lab3: {
         type: String,
         required: true
     },

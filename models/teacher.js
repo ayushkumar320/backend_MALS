@@ -18,6 +18,10 @@ const techerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    workingHourse:{
+        type:Number,
+        required : true,
+    }
 
 });
 
