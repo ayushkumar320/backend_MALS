@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import teacher from './teacher.js';
+import Teacher from './teacher.js';
 
 const courseSchema = new mongoose.Schema({
   courseName: {
@@ -21,7 +21,7 @@ const courseSchema = new mongoose.Schema({
   },
   instructor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'teacher',
+    ref: 'Teacher',
     required: true,
   },
 });

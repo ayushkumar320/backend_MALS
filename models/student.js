@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import SelectedCourse from './selectedcourse.js';
-
 const studentSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -27,7 +26,10 @@ const studentSchema = new mongoose.Schema({
     type: String,
     maxlength: 100,
   },
+  selectedCourses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'SelectedCourse',
+  }],
 });
-// export default SelectedCourse.discriminator('Student', studentSchema);
-// const Student = mongoose.model('Student', studentSchema);
-// export default Student;
+const Student = mongoose.model('Student', studentSchema);
+export default Student;

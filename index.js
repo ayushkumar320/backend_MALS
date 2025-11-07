@@ -3,6 +3,9 @@ import express from 'express';
 import Teacher from './models/teacher.js';
 import Admin from './models/admin.js';
 import Student from './models/student.js';
+import SelectedCourse from './models/selectedcourse.js';
+import Course from './models/course.js';
+
 import cors from 'cors';
 const app = express();
 const port = 3000;
