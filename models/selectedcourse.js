@@ -39,3 +39,4 @@ const SelectedCourseSchema = new mongoose.Schema(
   option
 );
 const SelectedCourse = mongoose.model('SelectedCourse', SelectedCourseSchema);
+export default SelectedCourse;
